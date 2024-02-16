@@ -52,6 +52,5 @@ public class SecServiceApplication {
 			accountService.addRoleToUser("user4", "USER");
 			accountService.addRoleToUser("user4", "BILLS_MANAGER");
 		};
-
 	}
 }
