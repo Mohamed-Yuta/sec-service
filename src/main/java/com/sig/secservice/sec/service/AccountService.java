@@ -1,4 +1,4 @@
-package com.sig.secservice.sec.sec.service;
+package com.sig.secservice.sec.service;
 
 import com.sig.secservice.sec.entities.AppRole;
 import com.sig.secservice.sec.entities.AppUser;
