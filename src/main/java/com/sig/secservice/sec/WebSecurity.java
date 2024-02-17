@@ -1,23 +1,40 @@
 package com.sig.secservice.sec;
 
+import com.sig.secservice.sec.entities.AppUser;
+import com.sig.secservice.sec.service.AccountService;
+import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class WebSecurity extends WebSecurityConfigurerAdapter {
+    private AccountService accountService ;
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(new UserDetailsService() {
             @Override
-            public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-                return null;
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                AppUser appUser = accountService.loadUserByUsername(username);
+                Collection<GrantedAuthority> authorities  = new ArrayList<>();
+                appUser.getAppRoles().forEach(appRole -> {
+                    authorities.add(new SimpleGrantedAuthority(appRole.getRoleName()));
+                });
+                return new User(appUser.getUsername(), appUser.getPassword(),authorities );
             }
         });
     }
